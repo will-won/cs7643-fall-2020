@@ -14,12 +14,12 @@ class Trainer:
         # run train on gpu, if possible
         if torch.cuda.is_available():
             print("CUDA available. Using GPU.")
-            self.cuda_enabled = True
-            self.module.cuda()
+            self.device = 'cuda:0'
         else:
             print("CUDA unavailable. Using CPU.")
-            self.cuda_enabled = False
+            self.device = 'cpu'
 
+        self.module = self.module.to(self.device)
         self.module.train()
 
     def train_step(self, data, label):
@@ -56,9 +56,8 @@ class Trainer:
         batch_size = 0
         corrects_count = 0
         for _, (test_data, test_label) in enumerate(self.data_loader.test):
-            if self.cuda_enabled:
-                test_data.cuda()
-                test_label.cuda()
+            test_data = test_data.to(self.device)
+            test_label = test_label.to(self.device)
 
             out = self.module(test_data)
             loss = self.criterion(out, test_label)
@@ -80,18 +79,16 @@ class Trainer:
     def train(self, epoch: int = 1, validation_step: int = 100) -> None:
         for e in range(epoch):
             for batch_index, (train_data, train_label) in enumerate(self.data_loader.train):
-                if self.cuda_enabled:
-                    train_data.cuda()
-                    train_label.cuda()
+                train_data = train_data.to(self.device)
+                train_label = train_label.to(self.device)
 
                 self.train_step(train_data, train_label)
 
                 if batch_index % validation_step == 0:
                     validation_data, validation_label = next(self.data_loader.validation)
 
-                    if self.cuda_enabled:
-                        validation_data.cuda()
-                        validation_label.cuda()
+                    validation_data = validation_data.to(self.device)
+                    validation_label = validation_label.to(self.device)
 
                     self.validate(validation_data, validation_label, epoch=e, batch_index=batch_index)
 
