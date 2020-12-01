@@ -13,10 +13,12 @@ class Trainer:
 
         # run train on gpu, if possible
         if torch.cuda.is_available():
-            print("CUDA available. Using GPU 0.")
-            self.module.to('cuda:0')
+            print("CUDA available. Using GPU.")
+            self.cuda_enabled = True
+            self.module.cuda()
         else:
-            print("CUDA not available. Using CPU instead.")
+            print("CUDA unavailable. Using CPU.")
+            self.cuda_enabled = False
 
         self.module.train()
 
@@ -54,6 +56,10 @@ class Trainer:
         batch_size = 0
         corrects_count = 0
         for _, (test_data, test_label) in enumerate(self.data_loader.test):
+            if self.cuda_enabled:
+                test_data.cuda()
+                test_label.cuda()
+
             out = self.module(test_data)
             loss = self.criterion(out, test_label)
 
@@ -74,10 +80,19 @@ class Trainer:
     def train(self, epoch: int = 1, validation_step: int = 100) -> None:
         for e in range(epoch):
             for batch_index, (train_data, train_label) in enumerate(self.data_loader.train):
+                if self.cuda_enabled:
+                    train_data.cuda()
+                    train_label.cuda()
+
                 self.train_step(train_data, train_label)
 
                 if batch_index % validation_step == 0:
                     validation_data, validation_label = next(self.data_loader.validation)
+
+                    if self.cuda_enabled:
+                        validation_data.cuda()
+                        validation_label.cuda()
+
                     self.validate(validation_data, validation_label, epoch=e, batch_index=batch_index)
 
             # after each epoch, save
