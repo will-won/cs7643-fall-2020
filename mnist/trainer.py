@@ -73,6 +73,8 @@ class Trainer:
         # back to training
         self.module.train()
 
+        return corrects_count, batch_size
+
     def save(self):
         torch.save(self.module.state_dict(), f='./trained_model/saved.pt')
 
