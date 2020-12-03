@@ -30,24 +30,22 @@ def main():
     trainer = Trainer(module=cnn_module, data_loader=mnist_data_loader, lr=1e-5)
     cnn_module.load_state_dict(torch.load('./trained_model/saved.pt'))
 
-    # print("Before pruning:")
-    # before_correct, _ = trainer.test()
+    print("Before pruning:")
+    before_correct, _ = trainer.test()
 
     print(f"Using threshold: {prune_threshold}")
     do_prune(cnn_module, threshold=prune_threshold)
 
-    # print("After pruning:")
-    # prune_correct, _ = trainer.test()
+    print("After pruning:")
+    prune_correct, _ = trainer.test()
 
-    # trainer.lr = 1e-6
-    # for finetune_step in range(5):
-    #     trainer.train(epoch=4, validation_step=10000)
-    #     do_prune(cnn_module, threshold=prune_threshold)
+    trainer.lr = 1e-6
+    for finetune_step in range(5):
+        trainer.train(epoch=4, validation_step=10000)
+        do_prune(cnn_module, threshold=prune_threshold)
     
-    # print("After finetuning:")
-    # finetune_correct, _ = trainer.test()
-
-    # print(f"{prune_threshold},{before_correct},{prune_correct},{finetune_correct}")
+    print("After finetuning:")
+    finetune_correct, _ = trainer.test()
 
     prune_count = 0
     total_count = 0
@@ -55,6 +53,8 @@ def main():
         if "weight" in name:
             total_count += w.numel()
             prune_count += w.nonzero().size(0)
+            
+    print(f"{prune_threshold},{before_correct},{prune_correct},{finetune_correct}")
     print(f"{prune_threshold},{total_count},{prune_count}")
 
 
