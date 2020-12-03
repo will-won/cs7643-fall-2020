@@ -5,6 +5,8 @@ Project: CS 7643 Deep Learning (Fall 2020)
 - Geonhwa Jeong (geonhwa.jeong@gatech.edu)
 - William Won (william.won@gatech.edu)
 
-## Directory information
-- `mnist/`: MNIST-CNN implementation
-- `cross-val/`: Cross validation related directory
+\* equal contribution
+
+## What's in this repo?
+- `mnist/`: MNIST-CNN implementation in PyTorch
+- `cross-val/`: Prunning cross validation on ResNet
