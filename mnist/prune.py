@@ -1,4 +1,5 @@
 import torch
+import sys
 from mnist_cnn_module import MnistCnnModule
 from mnist_data_loader import MnistDataLoader
 from trainer import Trainer
@@ -7,6 +8,8 @@ from torch.nn.utils import prune
 
 
 def main():
+    prune_threshold = float(sys.argv[1])
+    
     mnist_data_loader = MnistDataLoader(train_batch_size=1000,
                                         validation_batch_size=100,
                                         test_batch_size=1000)
@@ -22,7 +25,7 @@ def main():
                            (cnn_module.conv3, 'weight'),
                            (cnn_module.fc1, 'weight'),
                            (cnn_module.fc2, 'weight')]
-    prune.global_unstructured(parameters_to_prune, pruning_method=ThresholdPruningMethod, threshold=1e-2)
+    prune.global_unstructured(parameters_to_prune, pruning_method=ThresholdPruningMethod, threshold=prune_threshold)
     print("After pruning:")
     trainer.test()
 
