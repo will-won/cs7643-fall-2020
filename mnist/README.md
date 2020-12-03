@@ -18,6 +18,6 @@ python3 prune.py 1e-3
 
 3. Run `finetune.py` to load pretrained `saved.pt` model and run the static-threshold-based pruning, followed by post fine-tuning. You should pass the pruning threshold.
 ```
-python3 prune.py 1e-3
+python3 finetune.py 1e-3
 ```
 You can update the fine-tuning learning rate in the `finetune.py` file.
