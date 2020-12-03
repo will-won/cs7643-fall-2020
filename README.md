@@ -10,3 +10,5 @@ Project: CS 7643 Deep Learning (Fall 2020)
 ## What's in this repo?
 - `mnist/`: MNIST-CNN implementation in PyTorch
 - `cross-val/`: Prunning cross validation on ResNet
+
+Please see `README.md` in each directory about how to run source codes.
